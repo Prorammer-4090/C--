@@ -1,0 +1,44 @@
+{
+    "tasks": [
+        {
+            "type": "cppbuild",
+            "label": "C/C++: clang build active file",
+            "command": "/usr/bin/clang++",
+            "args": [
+                "-std=gnu++14", // Or your preferred standard
+                "-fcolor-diagnostics",
+                "-fansi-escape-codes",
+                "-g",
+                "${file}",
+                "/Users/jethroaiyesan/Programming/Tutorials/C++/includes/glad/src/glad.c", 
+                "-o",
+                "${fileDirname}/${fileBasenameNoExtension}",
+                "-I/opt/homebrew/include",
+                "-I/Users/jethroaiyesan/Programming/Tutorials/C++/includes", 
+                "-L/opt/homebrew/lib",
+                "-lglfw",
+                "-lSDL2",
+                "-lSDL2_image",
+                "-lSDL2_ttf",
+                "-framework",
+                "OpenGL",
+                "-framework",
+                "Cocoa",
+                "-framework",
+                "IOKit"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "compiler: /usr/bin/clang++"
+        }
+    ],
+    "version": "2.0.0"
+}
