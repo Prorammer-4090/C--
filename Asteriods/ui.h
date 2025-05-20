@@ -88,6 +88,9 @@ public:
     }
     
     void update(Input& input) override {
+        // Skip updating if the button is invisible
+        if (!visible) return;
+
         // Get mouse position
         int mouseX, mouseY;
         SDL_GetMouseState(&mouseX, &mouseY);
@@ -368,7 +371,10 @@ public:
     
     void update(Input& input) {
         for (auto element : elements) {
-            element->update(input);
+            // Only update visible elements
+            if (element->visible) {
+                element->update(input);
+            }
         }
     }
     
@@ -389,13 +395,21 @@ public:
         int mouseX, mouseY;
         SDL_GetMouseState(&mouseX, &mouseY);
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
-        SDL_RenderDrawCircle(renderer, mouseX, mouseY, 10, 1);
+        SDL_RenderDrawCircle(renderer, mouseX, mouseY, 10);
         
         // Reset render target to default
         SDL_SetRenderTarget(renderer, nullptr);
         
         // Render the UI texture to the screen
         SDL_RenderCopy(renderer, uiTexture, nullptr, nullptr);
+    }
+    
+    // Add method to clear all elements
+    void clearElements() {
+        for (auto element : elements) {
+            delete element;
+        }
+        elements.clear();
     }
 
 private:
@@ -407,7 +421,7 @@ private:
     vector<UIElement*> elements;
     
     // Helper function to draw a circle
-    void SDL_RenderDrawCircle(SDL_Renderer* renderer, int x, int y, int radius, int width) {
+    void SDL_RenderDrawCircle(SDL_Renderer* renderer, int x, int y, int radius) {
         const int diameter = radius * 2;
         
         int x_pos = radius - 1;

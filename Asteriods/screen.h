@@ -6,7 +6,6 @@
 
 
 class Screen {
-    SDL_Event e;
     SDL_Window* window;
     protected: SDL_Renderer* renderer;
     SDL_Surface* icon = nullptr;
