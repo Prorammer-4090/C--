@@ -155,9 +155,6 @@ public:
 
         // Recreate main menu
         mainMenu(mainMenuCallbacks);
-
-        // Render UI
-        uiManager.render();
     }
 
     void showPauseMenu() {
@@ -166,9 +163,6 @@ public:
 
         // Recreate pause menu
         pauseMenu(pauseMenuCallbacks);
-
-        // Render UI
-        uiManager.render();
     }
 
     void showControlsMenu(bool fromPauseMenu) {
@@ -180,9 +174,6 @@ public:
         
         // Log for debugging
         cout << "Showing controls menu, fromPauseMenu=" << (fromPauseMenu ? "true" : "false") << endl;
-
-        // Render UI
-        uiManager.render();
     }
 
     void showVolumeMenu(bool fromPauseMenu) {
@@ -194,9 +185,6 @@ public:
         
         // Log for debugging
         cout << "Showing volume menu, fromPauseMenu=" << (fromPauseMenu ? "true" : "false") << endl;
-
-        // Render UI
-        uiManager.render();
     }
 
     void showHighscoreMenu(vector<string> highscorelist) {
@@ -205,15 +193,11 @@ public:
 
         // Create highscore menu
         highscoreMenu(highscorelist);
-
-        // Render UI
-        uiManager.render();
     }
 
     void showGameOverMenu() {
         uiManager.clearElements();
         gameOverMenu(gameOverMenuCallbacks);
-        uiManager.render();
     }
 
     void showHighscoreRecordingMenu() {
@@ -223,7 +207,6 @@ public:
         if (playerNameDisplayLabel) {
             playerNameDisplayLabel->setText(currentNameInput);
         }
-        uiManager.render();
     }
 
     // Store callbacks for recreating menus
@@ -250,6 +233,16 @@ public:
     // Update the UI manager with input
     void update(Input& input) {
         uiManager.update(input);
+    }
+
+    // Add a render method to Menus class
+    void render() {
+        uiManager.render();
+    }
+
+    // Add a method to clear all UI elements from the menu's UIManager
+    void clearCurrentMenuElements() {
+        uiManager.clearElements();
     }
 
     // Methods for handling name input
@@ -282,14 +275,14 @@ public:
 private:
     void mainMenu(const vector<function<void()>>& callbacks) {
         gameName = uiManager.addElement<Label>(
-            SCREENWIDTH / 2, SCREENHEIGHT / 2 - 150,
+            SCREENWIDTH / 2, SCREENHEIGHT / 2 - 200,
             "Asteroids",
             SDL_Color{255, 255, 255, 255},
             50,
             "/Users/jethroaiyesan/Programming/Tutorials/C++/fonts/Silkscreen-Regular.ttf");
 
         startButton = uiManager.addElement<Button>(
-            SCREENWIDTH / 2, SCREENHEIGHT / 2, 250, 50,
+            SCREENWIDTH / 2, SCREENHEIGHT / 2 - 50, 250, 50,
             "Start",
             callbacks[0],
             SDL_Color{50, 200, 50, 255},
@@ -298,7 +291,7 @@ private:
         );
 
         controlsButton = uiManager.addElement<Button>(
-            SCREENWIDTH / 2, SCREENHEIGHT / 2 + 50, 250, 50,
+            SCREENWIDTH / 2, SCREENHEIGHT / 2 +25, 250, 50,
             "Controls",
             callbacks[1],
             SDL_Color{50, 200, 50, 255},
@@ -316,7 +309,7 @@ private:
         );
 
         highScoreButton = uiManager.addElement<Button>(
-            SCREENWIDTH / 2, SCREENHEIGHT / 2 + 150, 250, 50,
+            SCREENWIDTH / 2, SCREENHEIGHT / 2 + 175, 250, 50,
             "Highscore",
             callbacks[3],
             SDL_Color{50, 200, 50, 255},
@@ -325,7 +318,7 @@ private:
         );
 
         quitButton = uiManager.addElement<Button>(
-            SCREENWIDTH / 2, SCREENHEIGHT / 2 + 200, 250, 50,
+            SCREENWIDTH / 2, SCREENHEIGHT / 2 + 250, 250, 50,
             "Quit",
             callbacks[4],
             SDL_Color{50, 200, 50, 255},
@@ -476,7 +469,7 @@ private:
         );
 
         restartButton = uiManager.addElement<Button>(
-            SCREENWIDTH / 2, SCREENHEIGHT / 2, 250, 50,
+            SCREENWIDTH / 2, SCREENHEIGHT / 2 -25, 250, 50,
             "Restart",
             callbacks[1], // Restart game callback
             SDL_Color{50, 200, 50, 255},
@@ -485,7 +478,7 @@ private:
         );
 
         controlsButton = uiManager.addElement<Button>(
-            SCREENWIDTH / 2, SCREENHEIGHT / 2 + 100, 250, 50,
+            SCREENWIDTH / 2, SCREENHEIGHT / 2 + 50, 250, 50,
             "Controls",
             callbacks[2], // Show controls callback
             SDL_Color{50, 200, 50, 255},
@@ -494,7 +487,7 @@ private:
         );
 
         volumeButton = uiManager.addElement<Button>(
-            SCREENWIDTH / 2, SCREENHEIGHT / 2 + 200, 250, 50,
+            SCREENWIDTH / 2, SCREENHEIGHT / 2 + 125, 250, 50,
             "Volume",
             callbacks[3],
             SDL_Color{50, 200, 50, 255},
@@ -503,7 +496,7 @@ private:
         );
 
         mainMenuButton = uiManager.addElement<Button>(
-            SCREENWIDTH / 2, SCREENHEIGHT / 2 + 300, 250, 50,
+            SCREENWIDTH / 2, SCREENHEIGHT / 2 + 200, 250, 50,
             "Main Menu",
             callbacks[4], // Return to main menu callback
             SDL_Color{200, 50, 50, 255},

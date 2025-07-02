@@ -57,28 +57,50 @@ public:
           callback(callback),
           color(color),
           hoverColor(hoverColor),
-          currentColor(color),
           textColor(textColor),
           elevation(elevation),
-          dynamicElevation(elevation),
+          dynamicElevation(elevation), // Default to full elevation
           originalYPos(y),
-          fontSize(fontSize),
-          isPressed(false) {
-        
-        // Create top and bottom rects
+          fontSize(fontSize)
+    {
         topRect = {x, y - elevation, width, height};
         bottomRect = {x, y, width, height};
         
-        // Set bottom color (darker than top)
+        loadFont(fontPath);
+        
+        // Initialize visual state based on mouse at creation
+        int mouseX_init, mouseY_init;
+        Uint32 mouseState_init = SDL_GetMouseState(&mouseX_init, &mouseY_init);
+        
+        // Check for hover at creation time (button is in its "up" state)
+        bool hover_init = (mouseX_init >= rect.x && mouseX_init <= rect.x + rect.w &&
+                           mouseY_init >= originalYPos - elevation && 
+                           mouseY_init <= originalYPos - elevation + rect.h);
+
+        if (hover_init) {
+            this->currentColor = hoverColor; // Set hover color if mouse is over it
+            if (mouseState_init & SDL_BUTTON(SDL_BUTTON_LEFT)) { // Check if also pressed
+                isPressed = true;
+                dynamicElevation = 0; // Visually pressed
+            } else {
+                isPressed = false;
+                // dynamicElevation remains `elevation` (button is up but hovered)
+            }
+        } else {
+            this->currentColor = color; // Not hovering, use base color
+            isPressed = false;
+            // dynamicElevation remains `elevation`
+        }
+        
+        // Initialize bottomColor based on the determined currentColor
         bottomColor = {
-            static_cast<Uint8>(max(0, color.r - 40)),
-            static_cast<Uint8>(max(0, color.g - 40)),
-            static_cast<Uint8>(max(0, color.b - 40)),
-            color.a
+            static_cast<Uint8>(max(0, this->currentColor.r - 40)),
+            static_cast<Uint8>(max(0, this->currentColor.g - 40)),
+            static_cast<Uint8>(max(0, this->currentColor.b - 40)),
+            this->currentColor.a
         };
         
-        // Load font if provided, otherwise use default
-        loadFont(fontPath);
+        clickCooldownTimestamp = SDL_GetTicks64(); // Ready for first click immediately
     }
     
     ~Button() {
@@ -88,19 +110,24 @@ public:
     }
     
     void update(Input& input) override {
-        // Skip updating if the button is invisible
         if (!visible) return;
 
-        // Get mouse position
         int mouseX, mouseY;
         SDL_GetMouseState(&mouseX, &mouseY);
         
-        // Check if mouse is hovering over button
         bool hover = (mouseX >= rect.x && mouseX <= rect.x + rect.w &&
-                     mouseY >= rect.y - dynamicElevation && mouseY <= rect.y - dynamicElevation + rect.h);
+                      mouseY >= rect.y - dynamicElevation && 
+                      mouseY <= rect.y - dynamicElevation + rect.h);
         
-        // Update visual state
-        currentColor = hover ? hoverColor : color;
+        bool mouseIsCurrentlyDown = input.getMouseStates()["left"];
+
+        // Set currentColor based on hover and pressed state
+        if (isPressed || hover) { 
+            currentColor = hoverColor;
+        } else {
+            currentColor = color;
+        }
+        
         bottomColor = {
             static_cast<Uint8>(max(0, currentColor.r - 40)),
             static_cast<Uint8>(max(0, currentColor.g - 40)),
@@ -108,47 +135,58 @@ public:
             currentColor.a
         };
         
-        // Handle button press
         if (hover) {
-            if (input.getMouseStates()["left"]) {
-                if (!isPressed) {
-                    isPressed = true;
-                    dynamicElevation = 0;
-                    callback(); // Call the callback function
+            if (mouseIsCurrentlyDown) {
+                if (!isPressed) { // Mouse just went down over the button (transition to pressed)
+                    Uint64 currentTime = SDL_GetTicks64();
+                    if (currentTime >= clickCooldownTimestamp) { // Use >= for cooldown check
+                        isPressed = true;
+                        dynamicElevation = 0; // Button goes down visually
+
+                        clickCooldownTimestamp = currentTime + 200; // Set cooldown for the next potential click
+
+                        if (this->callback) {
+                            this->callback(); // Execute the callback
+                        }
+                        // CRITICAL: If the callback was executed (or even if it was null but we went down this path),
+                        // 'this' button might have been deleted (e.g., due to a menu change).
+                        // We MUST return immediately to prevent use-after-free on 'this' members.
+                        return; 
+                    }
                 }
-            } else {
-                isPressed = false;
-                dynamicElevation = elevation;
+                // If already isPressed, mouse is still held down over button. No new callback.
+            } else { // Mouse is up while hovering
+                if (isPressed) { // Was pressed, now released over button (transition to released)
+                    isPressed = false;
+                    dynamicElevation = elevation; // Button comes up visually
+                }
             }
-        } else {
-            isPressed = false;
-            dynamicElevation = elevation;
+        } else { // Not hovering
+            if (isPressed) { // Was pressed, but mouse released off-button or moved off while up
+                isPressed = false;
+                dynamicElevation = elevation; // Button comes up visually
+            }
         }
         
-        // Update button rectangles
+        // Update button's visual position. This line is only reached if the callback path was NOT taken in this update call.
         topRect.y = originalYPos - dynamicElevation;
-        bottomRect.y = originalYPos;
     }
     
     void render(SDL_Renderer* renderer) override {
         if (!visible) return;
         
-        // Draw bottom rect first (shadow/3D effect)
         if (dynamicElevation > 0) {
             SDL_SetRenderDrawColor(renderer, bottomColor.r, bottomColor.g, bottomColor.b, bottomColor.a);
             SDL_RenderFillRect(renderer, &bottomRect);
         }
         
-        // Draw top button
         SDL_Rect adjustedTopRect = {topRect.x, topRect.y, topRect.w, topRect.h};
         SDL_SetRenderDrawColor(renderer, currentColor.r, currentColor.g, currentColor.b, currentColor.a);
         SDL_RenderFillRect(renderer, &adjustedTopRect);
         
-        // Draw border
         SDL_SetRenderDrawColor(renderer, 50, 50, 50, 255);
         SDL_RenderDrawRect(renderer, &adjustedTopRect);
         
-        // Render text if font is loaded
         if (font != nullptr) {
             renderText(renderer, adjustedTopRect);
         }
@@ -170,24 +208,21 @@ private:
     bool isPressed;
     SDL_Rect topRect;
     SDL_Rect bottomRect;
+    Uint64 clickCooldownTimestamp; // Renamed from clickCooldown
     
     void loadFont(const string& fontPath) {
-        // Initialize SDL_ttf if not already initialized
         if (!TTF_WasInit() && TTF_Init() == -1) {
             cout << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << endl;
             return;
         }
         
-        // Load the font
         if (!fontPath.empty()) {
             font = TTF_OpenFont(fontPath.c_str(), fontSize);
             if (font == nullptr) {
                 cout << "Failed to load font: " << fontPath << " SDL_ttf Error: " << TTF_GetError() << endl;
-                // Try to load a default system font
                 font = TTF_OpenFont("/System/Library/Fonts/Helvetica.ttc", fontSize);
             }
         } else {
-            // Try to load a default system font
             font = TTF_OpenFont("/System/Library/Fonts/Helvetica.ttc", fontSize);
         }
         
@@ -210,11 +245,9 @@ private:
             return;
         }
         
-        // Get text dimensions
         int textWidth = textSurface->w;
         int textHeight = textSurface->h;
         
-        // Center text on button
         SDL_Rect renderQuad = {
             buttonRect.x + (buttonRect.w - textWidth) / 2, 
             buttonRect.y + (buttonRect.h - textHeight) / 2,
@@ -222,10 +255,8 @@ private:
             textHeight
         };
         
-        // Render to screen
         SDL_RenderCopy(renderer, textTexture, NULL, &renderQuad);
         
-        // Free resources
         SDL_FreeSurface(textSurface);
         SDL_DestroyTexture(textTexture);
     }
@@ -236,15 +267,12 @@ class Label : public UIElement {
 public:
     Label(int x, int y, const string& text, SDL_Color color = {255, 255, 255, 255},
           int fontSize = 20, string fontPath = "")
-        : UIElement(x, y, 100, 20),  // Initial size will be updated after font loading
+        : UIElement(x, y, 100, 20),
           text(text),
           color(color),
           fontSize(fontSize) {
         
-        // Load font
         loadFont(fontPath);
-        
-        // Update rect size based on text dimensions
         updateTextDimensions();
     }
     
@@ -270,15 +298,12 @@ public:
             return;
         }
         
-        // Render to screen
         SDL_RenderCopy(renderer, textTexture, NULL, &rect);
         
-        // Free resources
         SDL_FreeSurface(textSurface);
         SDL_DestroyTexture(textTexture);
     }
     
-    // Set new text
     void setText(const string& newText) {
         text = newText;
         updateTextDimensions();
@@ -291,13 +316,11 @@ private:
     int fontSize;
     
     void loadFont(const string& fontPath) {
-        // Initialize SDL_ttf if not already initialized
         if (!TTF_WasInit() && TTF_Init() == -1) {
             cout << "SDL_ttf could not initialize! SDL_ttf Error: " << TTF_GetError() << endl;
             return;
         }
         
-        // Load the font
         if (!fontPath.empty()) {
             font = TTF_OpenFont(fontPath.c_str(), fontSize);
             if (font == nullptr) {
@@ -329,7 +352,6 @@ class UIManager {
 public:
     UIManager(SDL_Renderer* renderer, int screenWidth, int screenHeight)
         : renderer(renderer), screenWidth(screenWidth), screenHeight(screenHeight) {
-        // Create UI surface for rendering (with alpha support)
         uiSurface = SDL_CreateRGBSurface(0, screenWidth, screenHeight, 32, 
                                          0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
         if (uiSurface == nullptr) {
@@ -342,18 +364,15 @@ public:
             cout << "UI Texture could not be created! SDL Error: " << SDL_GetError() << endl;
         }
         
-        // Set texture blend mode to support alpha
         SDL_SetTextureBlendMode(uiTexture, SDL_BLENDMODE_BLEND);
     }
     
     ~UIManager() {
-        // Clean up elements
         for (auto element : elements) {
             delete element;
         }
         elements.clear();
         
-        // Free surface and texture
         if (uiSurface != nullptr) {
             SDL_FreeSurface(uiSurface);
         }
@@ -364,14 +383,13 @@ public:
     
     template<typename T, typename... Args>
     T* addElement(Args&&... args) {
-        T* element = new T(std::forward<Args>(args)...);  // Use std:: namespace prefix
+        T* element = new T(std::forward<Args>(args)...);
         elements.push_back(element);
         return element;
     }
     
     void update(Input& input) {
         for (auto element : elements) {
-            // Only update visible elements
             if (element->visible) {
                 element->update(input);
             }
@@ -379,32 +397,25 @@ public:
     }
     
     void render() {
-        // Set render target to our texture
         SDL_SetRenderTarget(renderer, uiTexture);
         
-        // Clear with transparent background
         SDL_SetRenderDrawColor(renderer, 0, 0, 0, 0);
         SDL_RenderClear(renderer);
         
-        // Render all elements
         for (auto element : elements) {
             element->render(renderer);
         }
         
-        // Draw cursor (optional)
         int mouseX, mouseY;
         SDL_GetMouseState(&mouseX, &mouseY);
         SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
         SDL_RenderDrawCircle(renderer, mouseX, mouseY, 10);
         
-        // Reset render target to default
         SDL_SetRenderTarget(renderer, nullptr);
         
-        // Render the UI texture to the screen
         SDL_RenderCopy(renderer, uiTexture, nullptr, nullptr);
     }
     
-    // Add method to clear all elements
     void clearElements() {
         for (auto element : elements) {
             delete element;
@@ -420,7 +431,6 @@ private:
     SDL_Texture* uiTexture = nullptr;
     vector<UIElement*> elements;
     
-    // Helper function to draw a circle
     void SDL_RenderDrawCircle(SDL_Renderer* renderer, int x, int y, int radius) {
         const int diameter = radius * 2;
         

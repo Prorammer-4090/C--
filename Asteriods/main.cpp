@@ -182,47 +182,35 @@ class Asteriods : public Screen {
     
     protected:
         void update() override {
-            // Update input handling for all UI elements
-            uiManager->update(input);
-            
-            // Update the menu system (this was missing)
-            menus->update(input);
+            // Update game-specific UI (score, restart button if visible)
+            this->uiManager->update(input); 
             
             // Handle different game states
             switch (currentState) {
                 case MAIN_MENU:
-                    // Only handle menu interactions in main menu state
-                    // Game physics are paused
-                    menuBackgroundUpdate();
+                case CONTROLS_MENU:
+                case VOLUME_MENU:
+                case HIGHSCORE_MENU:
+                case GAME_OVER:
+                case HIGHSCORE_RECORDING:
+                case GAME_PAUSED: // Pause menu is active
+                    menus->update(input); // Update menu system
+                    if (currentState != GAME_PAUSED && currentState != HIGHSCORE_RECORDING && currentState != GAME_OVER) { 
+                        // Avoid double background update if game is paused or in text input states
+                        menuBackgroundUpdate();
+                    }
+                    if (currentState == HIGHSCORE_RECORDING) {
+                        handleNameInput(); // Specific input handling for this state
+                        menuBackgroundUpdate(); // Still update background for this screen
+                    }
+                    if (currentState == GAME_OVER) {
+                        menuBackgroundUpdate(); // Background for game over
+                    }
                     break;
                     
                 case GAME_RUNNING:
                     // Only update game physics when in running state
                     updateGameplay();
-                    break;
-                    
-                case GAME_PAUSED:
-                    // Game is paused, only handle menu interactions
-                    break;
-                    
-                case CONTROLS_MENU:
-                    menuBackgroundUpdate();
-                    break;
-                case VOLUME_MENU:
-                    menuBackgroundUpdate();
-                    break;
-                case HIGHSCORE_MENU:
-                    // Just handle menu interactions
-                    menuBackgroundUpdate();
-                    break;
-                case GAME_OVER:
-                    // Handle Game Over menu interactions
-                    menuBackgroundUpdate();
-                    break;
-                case HIGHSCORE_RECORDING:
-                    // Handle Highscore Recording menu interactions and text input
-                    menuBackgroundUpdate();
-                    handleNameInput();
                     break;
             }
         }
@@ -283,7 +271,7 @@ class Asteriods : public Screen {
             SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             SDL_RenderClear(renderer);
             
-            // Render asteroids in the background for menu screens
+            // Render asteroids in the background for menu screens or game
             SDL_SetRenderDrawColor(renderer, 0, 255, 0, 255);
             for (auto &a : vecAsteroids) {
                 DrawWireFrameModel(a.model, a.x, a.y, a.angle, a.nSize, a.nSize, a); // Use a.model
@@ -291,39 +279,43 @@ class Asteriods : public Screen {
             
             switch (currentState) {
                 case MAIN_MENU:
-                    // Display main menu (with all other menus hidden)
                     menus->showMainMenu();
+                    menus->render();
                     break;
                     
                 case GAME_RUNNING:
-                    // Render the game
-                    renderGameplay();
+                    renderGameplay(); // Handles its own uiManager->render()
                     break;
                     
                 case GAME_PAUSED:
-                    // Render the game (dimmed) with pause menu on top
-                    renderGameplay();
+                    renderGameplay(); // Render game (dimmed) + game UI
                     menus->showPauseMenu();
+                    menus->render(); // Render pause menu on top
                     break;
                     
                 case CONTROLS_MENU:
                     menus->showControlsMenu(previousState == GAME_PAUSED);
+                    menus->render();
                     break;
                     
                 case VOLUME_MENU:
                     menus->showVolumeMenu(previousState == GAME_PAUSED);
+                    menus->render();
                     break;
                     
                 case HIGHSCORE_MENU:
                     menus->showHighscoreMenu(getHighScores());
+                    menus->render();
                     break;
                     
                 case GAME_OVER:
                     menus->showGameOverMenu();
+                    menus->render();
                     break;
                     
                 case HIGHSCORE_RECORDING:
                     menus->showHighscoreRecordingMenu();
+                    menus->render();
                     break;
             }
             
@@ -856,10 +848,12 @@ class Asteriods : public Screen {
         void startGame() {
             resetGame();
             currentState = GAME_RUNNING;
+            menus->clearCurrentMenuElements(); // Clear any active menu UI
         }
         
         void resumeGame() {
             currentState = GAME_RUNNING;
+            menus->clearCurrentMenuElements(); // Clear any active menu UI (e.g., pause menu)
         }
 
         void showGameOverScreen() {
