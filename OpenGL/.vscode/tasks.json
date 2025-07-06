@@ -1,0 +1,108 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build OpenGL project",
+            "type": "shell",
+            "command": "clang++",
+            "args": [
+                "-std=c++17",
+                "-g",
+                "-Wall", 
+                "-Wextra", 
+                "-Wno-unused-function", 
+                "-Wno-unused-label", 
+                "-Wno-unused-parameter", 
+                "-Wno-unused-variable",
+                "*.cpp",
+                "includes/glad/src/glad.c",
+                "-I/opt/homebrew/include",
+                "-I./includes",
+                "-L/opt/homebrew/lib",
+                "-lglfw",
+                "-lSDL2",
+                "-lSDL2_image",
+                "-lSDL2_ttf",
+                "-framework",
+                "OpenGL",
+                "-framework",
+                "Cocoa",
+                "-framework",
+                "IOKit",
+                "-o",
+                "main"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "build and run OpenGL project",
+            "type": "shell",
+            "command": "clang++",
+            "args": [
+                "-std=c++17",
+                "-g",
+                "-Wall",
+                "-Wextra",
+                "*.cpp",
+                "includes/glad/src/glad.c",
+                "-I/opt/homebrew/include",
+                "-I./includes",
+                "-L/opt/homebrew/lib",
+                "-lglfw",
+                "-lSDL2",
+                "-lSDL2_image",
+                "-lSDL2_ttf",
+                "-framework",
+                "OpenGL",
+                "-framework",
+                "Cocoa",
+                "-framework",
+                "IOKit",
+                "-o",
+                "main",
+                "&&",
+                "./main"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "run OpenGL project",
+            "type": "shell",
+            "command": "./main",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "test",
+            "dependsOn": "build OpenGL project"
+        },
+        {
+            "label": "clean OpenGL project",
+            "type": "shell",
+            "command": "rm",
+            "args": [
+                "-f",
+                "main",
+                "*.dSYM"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "group": "build"
+        }
+    ]
+}

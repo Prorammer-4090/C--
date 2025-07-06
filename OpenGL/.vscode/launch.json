@@ -1,0 +1,36 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug OpenGL Project",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/main",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "preLaunchTask": "build OpenGL project"
+    },
+    {
+      "name": "Debug OpenGL Project (External Terminal)",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/main",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "externalTerminal",
+      "preLaunchTask": "build OpenGL project"
+    },
+    {
+      "name": "Debug OpenGL Project (Stop at Main)",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}/main",
+      "args": [],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "stopOnEntry": true,
+      "preLaunchTask": "build OpenGL project"
+    }
+  ]
+}
