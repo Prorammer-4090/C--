@@ -385,5 +385,6 @@
   ],
   "C_Cpp.intelliSenseEngine": "default",
   "C_Cpp.errorSquiggles": "enabled",
-  "cmake.sourceDirectory": "/Users/jethroaiyesan/Programming/Tutorials/C++/includes/glm",
+  "cmake.sourceDirectory": "/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL",
+  "c-cpp-compile-run.c-compiler": "clang++",
 }

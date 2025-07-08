@@ -8,21 +8,23 @@
             "args": [
                 "-std=c++17",
                 "-g",
-                "-Wall", 
-                "-Wextra", 
-                "-Wno-unused-function", 
-                "-Wno-unused-label", 
-                "-Wno-unused-parameter", 
+                "-Wall",
+                "-Wextra",
+                "-Wno-unused-function",
+                "-Wno-unused-label",
+                "-Wno-unused-parameter",
                 "-Wno-unused-variable",
                 "*.cpp",
                 "includes/glad/src/glad.c",
                 "-I/opt/homebrew/include",
                 "-I./includes",
                 "-L/opt/homebrew/lib",
+                "-L./includes/assimp/lib",
                 "-lglfw",
                 "-lSDL2",
                 "-lSDL2_image",
                 "-lSDL2_ttf",
+                "-lassimp",
                 "-framework",
                 "OpenGL",
                 "-framework",
@@ -30,7 +32,23 @@
                 "-framework",
                 "IOKit",
                 "-o",
-                "main"
+                "${workspaceFolder}/output/main"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build"
+        },
+        {
+            "label": "build and run OpenGL project",
+            "type": "shell",
+            "command": "sh",
+            "args": [
+                "-c",
+                "clang++ -std=c++17 -g -Wall -Wextra -Wno-unused-function -Wno-unused-label -Wno-unused-parameter -Wno-unused-variable *.cpp includes/glad/src/glad.c -I/opt/homebrew/include -I./includes -L/opt/homebrew/lib -L./includes/assimp/lib -lglfw -lSDL2 -lSDL2_image -lSDL2_ttf -lassimp -framework OpenGL -framework Cocoa -framework IOKit -o ${workspaceFolder}/output/main && ${workspaceFolder}/output/./main"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -44,46 +62,9 @@
             }
         },
         {
-            "label": "build and run OpenGL project",
-            "type": "shell",
-            "command": "clang++",
-            "args": [
-                "-std=c++17",
-                "-g",
-                "-Wall",
-                "-Wextra",
-                "*.cpp",
-                "includes/glad/src/glad.c",
-                "-I/opt/homebrew/include",
-                "-I./includes",
-                "-L/opt/homebrew/lib",
-                "-lglfw",
-                "-lSDL2",
-                "-lSDL2_image",
-                "-lSDL2_ttf",
-                "-framework",
-                "OpenGL",
-                "-framework",
-                "Cocoa",
-                "-framework",
-                "IOKit",
-                "-o",
-                "main",
-                "&&",
-                "./main"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": [
-                "$gcc"
-            ],
-            "group": "build"
-        },
-        {
             "label": "run OpenGL project",
             "type": "shell",
-            "command": "./main",
+            "command": "${workspaceFolder}/output/./main",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -101,6 +82,51 @@
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
+            },
+            "group": "build"
+        },
+        {
+            "label": "CMake build OpenGL project",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "OpenGLProject"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "CMake build and run OpenGL project",
+            "type": "shell",
+            "command": "make OpenGLProject && cd .. && ./output/OpenGLProject",
+            "options": {
+                "cwd": "${workspaceFolder}/build"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "CMake clean OpenGL project",
+            "type": "shell",
+            "command": "make",
+            "args": [
+                "clean"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/build"
             },
             "group": "build"
         }

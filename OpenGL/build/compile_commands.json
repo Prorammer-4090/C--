@@ -1,0 +1,32 @@
+[
+{
+  "directory": "/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/build",
+  "command": "/usr/bin/clang++  -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes/glad -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes/glm -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -o CMakeFiles/OpenGLProject.dir/mesh.cpp.o -c /Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/mesh.cpp",
+  "file": "/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/mesh.cpp",
+  "output": "CMakeFiles/OpenGLProject.dir/mesh.cpp.o"
+},
+{
+  "directory": "/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/build",
+  "command": "/usr/bin/clang++  -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes/glad -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes/glm -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -o CMakeFiles/OpenGLProject.dir/model.cpp.o -c /Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/model.cpp",
+  "file": "/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/model.cpp",
+  "output": "CMakeFiles/OpenGLProject.dir/model.cpp.o"
+},
+{
+  "directory": "/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/build",
+  "command": "/usr/bin/clang++  -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes/glad -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes/glm -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -o CMakeFiles/OpenGLProject.dir/shader.cpp.o -c /Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/shader.cpp",
+  "file": "/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/shader.cpp",
+  "output": "CMakeFiles/OpenGLProject.dir/shader.cpp.o"
+},
+{
+  "directory": "/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/build",
+  "command": "/usr/bin/clang++  -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes/glad -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes/glm -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -std=gnu++17 -arch arm64 -o CMakeFiles/OpenGLProject.dir/window.cpp.o -c /Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/window.cpp",
+  "file": "/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/window.cpp",
+  "output": "CMakeFiles/OpenGLProject.dir/window.cpp.o"
+},
+{
+  "directory": "/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/build",
+  "command": "/usr/bin/clang  -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes/glad -I/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes/glm -isystem /opt/homebrew/include -iframework /Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks -g -arch arm64 -o CMakeFiles/OpenGLProject.dir/includes/glad/src/glad.c.o -c /Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes/glad/src/glad.c",
+  "file": "/Users/jethroaiyesan/Programming/Tutorials/C++/OpenGL/includes/glad/src/glad.c",
+  "output": "CMakeFiles/OpenGLProject.dir/includes/glad/src/glad.c.o"
+}
+]

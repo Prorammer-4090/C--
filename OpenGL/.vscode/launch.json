@@ -1,36 +1,89 @@
 {
-  "version": "0.2.0",
-  "configurations": [
-    {
-      "name": "Debug OpenGL Project",
-      "type": "lldb",
-      "request": "launch",
-      "program": "${workspaceFolder}/main",
-      "args": [],
-      "cwd": "${workspaceFolder}",
-      "console": "integratedTerminal",
-      "preLaunchTask": "build OpenGL project"
-    },
-    {
-      "name": "Debug OpenGL Project (External Terminal)",
-      "type": "lldb",
-      "request": "launch",
-      "program": "${workspaceFolder}/main",
-      "args": [],
-      "cwd": "${workspaceFolder}",
-      "console": "externalTerminal",
-      "preLaunchTask": "build OpenGL project"
-    },
-    {
-      "name": "Debug OpenGL Project (Stop at Main)",
-      "type": "lldb",
-      "request": "launch",
-      "program": "${workspaceFolder}/main",
-      "args": [],
-      "cwd": "${workspaceFolder}",
-      "console": "integratedTerminal",
-      "stopOnEntry": true,
-      "preLaunchTask": "build OpenGL project"
-    }
-  ]
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Run OpenGL Project",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/output/main",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "preLaunchTask": "build OpenGL project",
+            "stopOnEntry": false
+        },
+        {
+            "name": "Debug OpenGL Project",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/output/main",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "preLaunchTask": "build OpenGL project"
+        },
+        {
+            "name": "Debug OpenGL Project (External Terminal)",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/output/main",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "externalTerminal",
+            "preLaunchTask": "build OpenGL project"
+        },
+        {
+            "name": "Debug OpenGL Project (Stop at Main)",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/output/main",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": true,
+            "preLaunchTask": "build OpenGL project"
+        },
+        {
+            "name": "CMake Run OpenGL Project",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/output/OpenGLProject",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "preLaunchTask": "CMake build OpenGL project",
+            "stopOnEntry": false
+        },
+        {
+            "name": "CMake Debug OpenGL Project",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/output/OpenGLProject",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "preLaunchTask": "CMake build OpenGL project"
+        },
+        {
+            "name": "CMake Debug OpenGL Project (External Terminal)",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/output/OpenGLProject",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "externalTerminal",
+            "preLaunchTask": "CMake build OpenGL project"
+        },
+        {
+            "name": "CMake Debug OpenGL Project (Stop at Main)",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/output/OpenGLProject",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal",
+            "stopOnEntry": true,
+            "preLaunchTask": "CMake build OpenGL project"
+        }
+    ]
 }
